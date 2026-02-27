@@ -42,7 +42,7 @@ def test_httplib_http_response(taxii_content_type, httpserver):
     http_response = client.call_taxii_service2(httpserver.host, '/poll_service_path/', libtaxii.constants.VID_TAXII_XML_10, b"", port=httpserver.port)
     assert isinstance(http_response, HTTPResponse)
 
-    message = libtaxii.get_message_from_httplib_http_response(http_response, IN_RESPONSE_TO)
+    message = libtaxii.get_message_from_http_response(http_response, IN_RESPONSE_TO)
     assert message == expected_message
 
 
@@ -61,7 +61,7 @@ def test_httplib_http_response_error(taxii_content_type, httpserver):
     http_response = client.call_taxii_service2(httpserver.host, '/poll_service_path/', libtaxii.constants.VID_TAXII_XML_10, b"", port=httpserver.port)
     assert isinstance(http_response, HTTPError)
 
-    message = libtaxii.get_message_from_httplib_http_response(http_response, IN_RESPONSE_TO)
+    message = libtaxii.get_message_from_http_response(http_response, IN_RESPONSE_TO)
     assert message == expected_message
 
 
@@ -73,7 +73,7 @@ def test_httplib_http_response_no_taxii_content_type(httpserver):
 
     client = libtaxii.clients.HttpClient()
     http_response = client.call_taxii_service2(httpserver.host, '/poll_service_path/', libtaxii.constants.VID_TAXII_XML_10, b"", port=httpserver.port)
-    message = libtaxii.get_message_from_httplib_http_response(http_response, IN_RESPONSE_TO)
+    message = libtaxii.get_message_from_http_response(http_response, IN_RESPONSE_TO)
 
     assert isinstance(message, libtaxii.messages_11.StatusMessage)
     assert message.in_response_to == IN_RESPONSE_TO
