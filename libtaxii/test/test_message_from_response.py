@@ -91,3 +91,35 @@ def test_httplib_http_response_no_taxii_content_type(httpserver):
         '''some content'''
     )
 
+
+def test_httplib_http_response_error_no_taxii_content_type(httpserver):
+    httpserver.expect_request("/poll_service_path/").respond_with_data(
+        "some content".encode('windows-1252'),
+        status=500,
+        content_type="application/xml; charset=windows-1252",
+    )
+
+    client = libtaxii.clients.HttpClient()
+    http_response = client.call_taxii_service2(httpserver.host, '/poll_service_path/', libtaxii.constants.VID_TAXII_XML_10, b"", port=httpserver.port)
+    assert isinstance(http_response, HTTPError)
+
+    message = libtaxii.get_message_from_http_response(http_response, IN_RESPONSE_TO)
+    assert isinstance(message, libtaxii.messages_11.StatusMessage)
+    assert message.in_response_to == IN_RESPONSE_TO
+    assert message.message_id == '0'
+
+    server = http_response.headers.get("Server")
+    date = http_response.headers.get("Date")
+    assert message.message == (
+        f'''HTTP Error 500: INTERNAL SERVER ERROR\r\n'''
+        f'''Server: {server}\n'''
+        f'''Date: {date}\n'''
+        '''Content-Type: application/xml; charset=windows-1252\n'''
+        '''Content-Length: 12\n'''
+        '''Connection: close\n'''
+        '''\n'''
+        '''\r\n'''
+        '''some content'''
+    )
+
+
