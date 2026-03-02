@@ -5,6 +5,7 @@ import pytest
 
 import libtaxii
 from libtaxii.constants import VID_TAXII_XML_10, VID_TAXII_XML_11, VID_CERT_EU_JSON_10
+import libtaxii.clients
 import libtaxii.messages
 
 
@@ -112,12 +113,11 @@ def test_httplib_http_response_error_no_taxii_content_type(httpserver):
     date = http_response.headers.get("Date")
     assert message.message == (
         f'''HTTP Error 500: INTERNAL SERVER ERROR\r\n'''
-        f'''Server: {server}\n'''
-        f'''Date: {date}\n'''
-        '''Content-Type: application/xml; charset=windows-1252\n'''
-        '''Content-Length: 12\n'''
-        '''Connection: close\n'''
-        '''\n'''
+        f'''Server: {server}\r\n'''
+        f'''Date: {date}\r\n'''
+        '''Content-Type: application/xml; charset=windows-1252\r\n'''
+        '''Content-Length: 12\r\n'''
+        '''Connection: close\r\n'''
         '''\r\n'''
         '''some content'''
     )
