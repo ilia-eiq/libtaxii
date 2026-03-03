@@ -37,7 +37,7 @@ def get_message_from_http_response(http_response, in_response_to):
     """
 
     taxii_content_type = http_response.getheader('X-TAXII-Content-Type')
-    encoding = http_response.headers.get_charset() or 'utf-8'
+    encoding = http_response.headers.get_content_charset() or 'utf-8'
 
     response_message = http_response.read()
 

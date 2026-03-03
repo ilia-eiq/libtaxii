@@ -19,8 +19,8 @@ MESSAGES = {
         libtaxii.messages_10.DiscoveryRequest(message_id='1')
     ),
     VID_TAXII_XML_11: (
-        '<taxii_11:Discovery_Request xmlns:taxii_11="http://taxii.mitre.org/messages/taxii_xml_binding-1.1" message_id="test message id"/>',
-        libtaxii.messages_11.DiscoveryRequest(message_id='test message id'),
+        '<taxii_11:Discovery_Request xmlns:taxii_11="http://taxii.mitre.org/messages/taxii_xml_binding-1.1" message_id="non-ascii message id ÀÁÂÃÄÅ"/>',
+        libtaxii.messages_11.DiscoveryRequest(message_id='non-ascii message id ÀÁÂÃÄÅ'),
     ),
     VID_CERT_EU_JSON_10: (
         '{"extended_headers": {}, "message_type": "Discovery_Request", "message_id": "1"}',
@@ -34,8 +34,8 @@ def test_httplib_http_response(taxii_content_type, httpserver):
     content, expected_message = MESSAGES[taxii_content_type]
 
     httpserver.expect_request("/poll_service_path/").respond_with_data(
-        content.encode('windows-1252'),
-        content_type="application/xml; charset=windows-1252",
+        content.encode('ISO-8859-1'),
+        content_type="application/xml; charset=ISO-8859-1",
         headers={"X-TAXII-Content-Type": taxii_content_type}
     )
 
@@ -44,6 +44,7 @@ def test_httplib_http_response(taxii_content_type, httpserver):
     assert isinstance(http_response, HTTPResponse)
 
     message = libtaxii.get_message_from_http_response(http_response, IN_RESPONSE_TO)
+    print(message.message_id)
     assert message == expected_message
 
 
@@ -52,9 +53,9 @@ def test_httplib_http_response_error(taxii_content_type, httpserver):
     content, expected_message = MESSAGES[taxii_content_type]
 
     httpserver.expect_request("/poll_service_path/").respond_with_data(
-        content.encode('windows-1252'),
+        content.encode('ISO-8859-1'),
         status=500,
-        content_type="application/xml; charset=windows-1252",
+        content_type="application/xml; charset=ISO-8859-1",
         headers={"X-TAXII-Content-Type": taxii_content_type}
     )
 
@@ -68,8 +69,8 @@ def test_httplib_http_response_error(taxii_content_type, httpserver):
 
 def test_httplib_http_response_no_taxii_content_type(httpserver):
     httpserver.expect_request("/poll_service_path/").respond_with_data(
-        "some content".encode('windows-1252'),
-        content_type="application/xml; charset=windows-1252",
+        "some content".encode('ISO-8859-1'),
+        content_type="application/xml; charset=ISO-8859-1",
     )
 
     client = libtaxii.clients.HttpClient()
@@ -85,7 +86,7 @@ def test_httplib_http_response_no_taxii_content_type(httpserver):
     assert message.message == (
         f'''Server: {server}\r\n'''
         f'''Date: {date}\r\n'''
-        '''Content-Type: application/xml; charset=windows-1252\r\n'''
+        '''Content-Type: application/xml; charset=ISO-8859-1\r\n'''
         '''Content-Length: 12\r\n'''
         '''Connection: close\r\n'''
         '''\r\n'''
@@ -95,9 +96,9 @@ def test_httplib_http_response_no_taxii_content_type(httpserver):
 
 def test_httplib_http_response_error_no_taxii_content_type(httpserver):
     httpserver.expect_request("/poll_service_path/").respond_with_data(
-        "some content".encode('windows-1252'),
+        "some content".encode('ISO-8859-1'),
         status=500,
-        content_type="application/xml; charset=windows-1252",
+        content_type="application/xml; charset=ISO-8859-1",
     )
 
     client = libtaxii.clients.HttpClient()
@@ -115,7 +116,7 @@ def test_httplib_http_response_error_no_taxii_content_type(httpserver):
         f'''HTTP Error 500: INTERNAL SERVER ERROR\r\n'''
         f'''Server: {server}\r\n'''
         f'''Date: {date}\r\n'''
-        '''Content-Type: application/xml; charset=windows-1252\r\n'''
+        '''Content-Type: application/xml; charset=ISO-8859-1\r\n'''
         '''Content-Length: 12\r\n'''
         '''Connection: close\r\n'''
         '''\r\n'''
