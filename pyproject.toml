@@ -1,2 +1,11 @@
 [build-system]
 requires = ["setuptools"]
+
+[tool.bumpversion]
+current_version = "1.1.119"
+tag_name = "{new_version}"
+commit = true
+tag = true
+
+[[tool.bumpversion.files]]
+filename = "libtaxii/version.py"
